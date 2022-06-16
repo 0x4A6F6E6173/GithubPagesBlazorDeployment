@@ -24,6 +24,15 @@ jobs:
       - name: Publish .Net Core Project
         run: dotnet publish GithubPagesBlazorDeployment/GithubPagesBlazorDeployment.csproj -c Release -o release --nologo
         
+      - name: Change base-tag in *.html from '/' to '/GithubPagesBlazorDeployment/'
+        run: sed -i 's/<base href="\/" \/>/<base href="\/GithubPagesBlazorDeployment\/">/g' release/wwwroot/index.html
+        
+      - name: copy index.html to 404.html
+        run: cp release/wwwroot/index.html release/wwwroot/404.html
+        
+      - name: Add an empty .nojekyll file
+        run: touch release/wwwroot/.nojekyll
+        
       - name: Push wwwroot to Github Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
